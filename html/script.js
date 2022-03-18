@@ -141,9 +141,10 @@ $(document).on('click', '.character', function(e) {
             $(selectedChar).addClass("char-selected");
             setupCharInfo($(this).data('cData'))
             $("#play-text").html("Play");
+            $("#delete").css({"display":"none"});
             $("#delete-text").html("Delete");
             $("#play").css({"display":"block"});
-            $("#delete").css({"display":"block"});
+            // $("#delete").css({"display":"block"});
             $.post('https://qb-multicharacter/cDataPed', JSON.stringify({
                 cData: cDataPed
             }));
@@ -164,9 +165,10 @@ $(document).on('click', '.character', function(e) {
             $(selectedChar).addClass("char-selected");
             setupCharInfo($(this).data('cData'))
             $("#play-text").html("Play");
+            $("#delete").css({"display":"none"});
             $("#delete-text").html("Delete");
             $("#play").css({"display":"block"});
-            $("#delete").css({"display":"block"});
+            // $("#delete").css({"display":"block"});
             $.post('https://qb-multicharacter/cDataPed', JSON.stringify({
                 cData: cDataPed
             }));
