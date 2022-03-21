@@ -36,8 +36,11 @@ local function skyCam(bool)
 end
 
 local function openCharMenu(bool)
+    print("open char menu")
+    print(bool)
     QBCore.Functions.TriggerCallback("qb-multicharacter:server:GetNumberOfCharacters", function(result)
         SetNuiFocus(bool, bool)
+        print("open nui")
         SendNUIMessage({
             action = "ui",
             toggle = bool,
@@ -51,6 +54,7 @@ end
 
 RegisterNetEvent('qb-multicharacter:client:closeNUIdefault', function() -- This event is only for no starting apartments
     DeleteEntity(charPed)
+    print("close default")
     SetNuiFocus(false, false)
     DoScreenFadeOut(500)
     Wait(2000)
@@ -74,19 +78,24 @@ RegisterNetEvent('qb-multicharacter:client:closeNUI', function()
 end)
 
 RegisterNetEvent('qb-multicharacter:client:chooseChar', function()
+    print("choose char")
     SetNuiFocus(false, false)
     DoScreenFadeOut(10)
     Wait(1000)
+    print("a")
     local interior = GetInteriorAtCoords(Config.Interior.x, Config.Interior.y, Config.Interior.z - 18.9)
     LoadInterior(interior)
     while not IsInteriorReady(interior) do
-        Wait(1000)
+        Wait(50)
     end
+    print("b")
     FreezeEntityPosition(PlayerPedId(), true)
     SetEntityCoords(PlayerPedId(), Config.HiddenCoords.x, Config.HiddenCoords.y, Config.HiddenCoords.z)
     Wait(1500)
+    print("c")
     ShutdownLoadingScreen()
     ShutdownLoadingScreenNui()
+    print("d")
     openCharMenu(true)
 end)
 

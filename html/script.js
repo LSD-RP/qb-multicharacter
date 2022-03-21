@@ -7,14 +7,15 @@ var NChar = null;
 $(document).ready(function (){
     window.addEventListener('message', function (event) {
         var data = event.data;
-
+        console.log("ready");
         if (data.action == "ui") {
 			NChar = data.nChar;
             if (data.toggle) {
                 $('.container').show();
                 $(".welcomescreen").fadeIn(150);
+                console.log("1");
                 qbMultiCharacters.resetAll();
-
+                console.log("2");
                 var originalText = "Retrieving player data";
                 var loadingProgress = 0;
                 var loadingDots = 0;
@@ -40,7 +41,7 @@ $(document).ready(function (){
                         loadingDots = 0;
                     }
                 }, 500);
-
+                console.log("3");
                 setTimeout(function(){
 					setCharactersList()
                     $.post('https://qb-multicharacter/setupCharacters');
@@ -51,6 +52,7 @@ $(document).ready(function (){
                         $(".welcomescreen").fadeOut(150);
                         qbMultiCharacters.fadeInDown('.character-info', '20%', 400);
                         qbMultiCharacters.fadeInDown('.characters-list', '20%', 400);
+                        console.log("remopve blur")
                         $.post('https://qb-multicharacter/removeBlur');
                     }, 2000);
                 }, 2000);

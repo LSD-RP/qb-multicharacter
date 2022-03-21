@@ -122,7 +122,8 @@ end)
 QBCore.Functions.CreateCallback("qb-multicharacter:server:GetUserCharacters", function(source, cb)
     local src = source
     local license = QBCore.Functions.GetIdentifier(src, 'license')
-
+    print("get user characters")
+    print(license)
     MySQL.Async.execute('SELECT * FROM players WHERE license = ?', {license}, function(result)
         cb(result)
     end)
@@ -137,7 +138,6 @@ end)
 QBCore.Functions.CreateCallback("qb-multicharacter:server:GetNumberOfCharacters", function(source, cb)
     local license = QBCore.Functions.GetIdentifier(source, 'license')
     local numOfChars = 0
-
     if next(Config.PlayersNumberOfCharacters) then
         for i, v in pairs(Config.PlayersNumberOfCharacters) do
             if v.license == license then
@@ -156,6 +156,8 @@ end)
 QBCore.Functions.CreateCallback("qb-multicharacter:server:setupCharacters", function(source, cb)
     local license = QBCore.Functions.GetIdentifier(source, 'license')
     local plyChars = {}
+    print("setup characters")
+    print(license)
     MySQL.Async.fetchAll('SELECT * FROM players WHERE license = ?', {license}, function(result)
         for i = 1, (#result), 1 do
             result[i].charinfo = json.decode(result[i].charinfo)
@@ -163,6 +165,7 @@ QBCore.Functions.CreateCallback("qb-multicharacter:server:setupCharacters", func
             result[i].job = json.decode(result[i].job)
             plyChars[#plyChars+1] = result[i]
         end
+        print(plyChars)
         cb(plyChars)
     end)
 end)
