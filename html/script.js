@@ -5,73 +5,160 @@ var Loaded = false;
 var NChar = null;
 
 $(document).ready(function (){
-    window.addEventListener('message', function (event) {
-        var data = event.data;
-        console.log("ready");
-        if (data.action == "ui") {
-			NChar = data.nChar;
-            if (data.toggle) {
-                $('.container').show();
-                $(".welcomescreen").fadeIn(150);
-                console.log("1");
-                qbMultiCharacters.resetAll();
-                console.log("2");
-                var originalText = "Retrieving player data";
-                var loadingProgress = 0;
-                var loadingDots = 0;
-                $("#loading-text").html(originalText);
-                var DotsInterval = setInterval(function() {
-                    $("#loading-text").append(".");
-                    loadingDots++;
-                    loadingProgress++;
-                    if (loadingProgress == 3) {
-                        originalText = "Validating player data"
-                        $("#loading-text").html(originalText);
-                    }
-                    if (loadingProgress == 4) {
-                        originalText = "Retrieving characters"
-                        $("#loading-text").html(originalText);
-                    }
-                    if (loadingProgress == 6) {
-                        originalText = "Validating characters"
-                        $("#loading-text").html(originalText);
-                    }
-                    if(loadingDots == 4) {
-                        $("#loading-text").html(originalText);
-                        loadingDots = 0;
-                    }
-                }, 500);
-                console.log("3");
-                setTimeout(function(){
-					setCharactersList()
-                    $.post('https://qb-multicharacter/setupCharacters');
-                    setTimeout(function(){
-                        clearInterval(DotsInterval);
-                        loadingProgress = 0;
-                        originalText = "Retrieving data";
-                        $(".welcomescreen").fadeOut(150);
-                        qbMultiCharacters.fadeInDown('.character-info', '20%', 400);
-                        qbMultiCharacters.fadeInDown('.characters-list', '20%', 400);
-                        console.log("remopve blur")
-                        $.post('https://qb-multicharacter/removeBlur');
-                    }, 2000);
-                }, 2000);
-            } else {
-                $('.container').fadeOut(250);
-                qbMultiCharacters.resetAll();
-            }
-        }
-
-        if (data.action == "setupCharacters") {
-            setupCharacters(event.data.characters)
-        }
-
-        if (data.action == "setupCharInfo") {
-            setupCharInfo(event.data.chardata)
-        }
-    });
+    console.log("DOCUMENT READY");
+    
 
     $('.datepicker').datepicker();
+});
+
+const documentLoad = new Promise(resolve => {
+    $(document).ready(function() {
+        console.log("resolve 1");
+        resolve();
+    });
+});
+const messageReceived = new Promise(resolve => {
+    window.addEventListener('message', event => {
+        console.log("resolve 2");
+        console.log(event)
+        resolve(event);
+    });
+});
+
+(async function() {
+    await documentLoad;
+    const event = await messageReceived;
+    console.log("post await");
+    // do other bullshit with event
+    var data = event.data;
+    console.log("ready");
+    if (data.action == "ui") {
+        NChar = data.nChar;
+        if (data.toggle) {
+            $('.container').show();
+            $(".welcomescreen").fadeIn(150);
+            console.log("1");
+            qbMultiCharacters.resetAll();
+            console.log("2");
+            var originalText = "Retrieving player data";
+            var loadingProgress = 0;
+            var loadingDots = 0;
+            $("#loading-text").html(originalText);
+            var DotsInterval = setInterval(function() {
+                $("#loading-text").append(".");
+                loadingDots++;
+                loadingProgress++;
+                if (loadingProgress == 3) {
+                    originalText = "Validating player data"
+                    $("#loading-text").html(originalText);
+                }
+                if (loadingProgress == 4) {
+                    originalText = "Retrieving characters"
+                    $("#loading-text").html(originalText);
+                }
+                if (loadingProgress == 6) {
+                    originalText = "Validating characters"
+                    $("#loading-text").html(originalText);
+                }
+                if(loadingDots == 4) {
+                    $("#loading-text").html(originalText);
+                    loadingDots = 0;
+                }
+            }, 500);
+            console.log("3");
+            setTimeout(function(){
+                setCharactersList()
+                $.post('https://qb-multicharacter/setupCharacters');
+                setTimeout(function(){
+                    clearInterval(DotsInterval);
+                    loadingProgress = 0;
+                    originalText = "Retrieving data";
+                    $(".welcomescreen").fadeOut(150);
+                    qbMultiCharacters.fadeInDown('.character-info', '20%', 400);
+                    qbMultiCharacters.fadeInDown('.characters-list', '20%', 400);
+                    console.log("remopve blur")
+                    $.post('https://qb-multicharacter/removeBlur');
+                }, 2000);
+            }, 2000);
+        } else {
+            $('.container').fadeOut(250);
+            qbMultiCharacters.resetAll();
+        }
+    }
+
+    if (data.action == "setupCharacters") {
+        setupCharacters(event.data.characters)
+    }
+
+    if (data.action == "setupCharInfo") {
+        setupCharInfo(event.data.chardata)
+    }
+})();
+
+window.addEventListener('message', function (event) {
+    var data = event.data;
+    console.log("ready");
+    if (data.action == "ui") {
+        NChar = data.nChar;
+        if (data.toggle) {
+            $('.container').show();
+            $(".welcomescreen").fadeIn(150);
+            console.log("1");
+            qbMultiCharacters.resetAll();
+            console.log("2");
+            var originalText = "Retrieving player data";
+            var loadingProgress = 0;
+            var loadingDots = 0;
+            $("#loading-text").html(originalText);
+            var DotsInterval = setInterval(function() {
+                $("#loading-text").append(".");
+                loadingDots++;
+                loadingProgress++;
+                if (loadingProgress == 3) {
+                    originalText = "Validating player data"
+                    $("#loading-text").html(originalText);
+                }
+                if (loadingProgress == 4) {
+                    originalText = "Retrieving characters"
+                    $("#loading-text").html(originalText);
+                }
+                if (loadingProgress == 6) {
+                    originalText = "Validating characters"
+                    $("#loading-text").html(originalText);
+                }
+                if(loadingDots == 4) {
+                    $("#loading-text").html(originalText);
+                    loadingDots = 0;
+                }
+            }, 500);
+            console.log("3");
+            setTimeout(function(){
+                setCharactersList()
+                $.post('https://qb-multicharacter/setupCharacters');
+                setTimeout(function(){
+                    clearInterval(DotsInterval);
+                    loadingProgress = 0;
+                    originalText = "Retrieving data";
+                    $(".welcomescreen").fadeOut(150);
+                    qbMultiCharacters.fadeInDown('.character-info', '20%', 400);
+                    qbMultiCharacters.fadeInDown('.characters-list', '20%', 400);
+                    console.log("remopve blur")
+                    $.post('https://qb-multicharacter/removeBlur');
+                }, 2000);
+            }, 2000);
+        } else {
+            $('.container').fadeOut(250);
+            qbMultiCharacters.resetAll();
+        }
+    }
+
+    if (data.action == "setupCharacters") {
+        setupCharacters(event.data.characters)
+    }
+
+    if (data.action == "setupCharInfo") {
+        setupCharInfo(event.data.chardata)
+    }
 });
 
 $('.continue-btn').click(function(e){
@@ -297,6 +384,7 @@ $(document).on('click', '#play', function(e) {
 
     if (selectedChar !== null) {
         if (charData !== "") {
+            console.log(JSON.stringify($(selectedChar).data('cData'), null, 2))
             $.post('https://qb-multicharacter/selectCharacter', JSON.stringify({
                 cData: $(selectedChar).data('cData')
             }));

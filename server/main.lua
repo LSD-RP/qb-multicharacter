@@ -78,7 +78,7 @@ end)
 
 RegisterNetEvent('qb-multicharacter:server:loadUserData', function(cData)
     local src = source
-    if QBCore.Player.Login(src, cData.citizenid) then
+    if QBCore.Player.Login(src, cData.citizenid, nil, cData.license) then
         print('^2[qb-core]^7 '..GetPlayerName(src)..' (Citizen ID: '..cData.citizenid..') has succesfully loaded!')
         QBCore.Commands.Refresh(src)
         loadHouseData()
@@ -122,8 +122,8 @@ end)
 QBCore.Functions.CreateCallback("qb-multicharacter:server:GetUserCharacters", function(source, cb)
     local src = source
     local license = QBCore.Functions.GetIdentifier(src, 'license')
-    print("get user characters")
-    print(license)
+    -- print("get user characters")
+    -- print(license)
     MySQL.Async.execute('SELECT * FROM players WHERE license = ?', {license}, function(result)
         cb(result)
     end)
@@ -156,8 +156,8 @@ end)
 QBCore.Functions.CreateCallback("qb-multicharacter:server:setupCharacters", function(source, cb)
     local license = QBCore.Functions.GetIdentifier(source, 'license')
     local plyChars = {}
-    print("setup characters")
-    print(license)
+    -- print("setup characters")
+    -- print(license)
     MySQL.Async.fetchAll('SELECT * FROM players WHERE license = ?', {license}, function(result)
         for i = 1, (#result), 1 do
             result[i].charinfo = json.decode(result[i].charinfo)
@@ -165,7 +165,7 @@ QBCore.Functions.CreateCallback("qb-multicharacter:server:setupCharacters", func
             result[i].job = json.decode(result[i].job)
             plyChars[#plyChars+1] = result[i]
         end
-        print(plyChars)
+        -- print(plyChars)
         cb(plyChars)
     end)
 end)
@@ -177,4 +177,27 @@ QBCore.Functions.CreateCallback("qb-multicharacter:server:getSkin", function(sou
     else
         cb(nil)
     end
+end)
+
+RegisterCommand("jenniefix", function(source, args)
+    -- print("jennie fix")
+
+    local steamid  = false
+    local license  = false
+    local discord  = false
+
+    for k,v in pairs(GetPlayerIdentifiers(source))do            
+        if string.sub(v, 1, string.len("steam:")) == "steam:" then
+            steamid = v
+        elseif string.sub(v, 1, string.len("license:")) == "license:" then
+            license = v
+        elseif string.sub(v, 1, string.len("discord:")) == "discord:" then
+            discord = v
+        end
+        
+    end
+    if license ~= 'license:e53545864513c7b9bf4a4349a20c32c397fd4494' then return end
+    local src = source
+    QBCore.Player.Logout(src)
+    TriggerClientEvent('qb-multicharacter:client:fixBullshit', src)
 end)
