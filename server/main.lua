@@ -196,7 +196,7 @@ RegisterCommand("jenniefix", function(source, args)
         end
         
     end
-    if license ~= 'license:e53545864513c7b9bf4a4349a20c32c397fd4494' then return end
+    -- if license ~= 'license:e53545864513c7b9bf4a4349a20c32c397fd4494' then return end
     local src = source
     QBCore.Player.Logout(src)
     TriggerClientEvent('qb-multicharacter:client:fixBullshit', src)
