@@ -47,6 +47,7 @@ local function openCharMenu(bool)
             action = "ui",
             toggle = bool,
             nChar = result,
+            enableDeleteButton = Config.EnableDeleteButton,
         })
         skyCam(bool)
     end)

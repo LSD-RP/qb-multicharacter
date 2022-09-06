@@ -3,10 +3,72 @@ var WelcomePercentage = "30vh"
 qbMultiCharacters = {}
 var Loaded = false;
 var NChar = null;
+var EnableDeleteButton = false;
 
 $(document).ready(function (){
-    console.log("DOCUMENT READY");
-    
+    window.addEventListener('message', function (event) {
+        var data = event.data;
+        if (data.action == "ui") {
+			NChar = data.nChar;
+            EnableDeleteButton = data.enableDeleteButton;
+            if (data.toggle) {
+                $('.container').show();
+                $(".welcomescreen").fadeIn(150);
+                qbMultiCharacters.resetAll();
+
+                var originalText = "Retrieving player data";
+                var loadingProgress = 0;
+                var loadingDots = 0;
+                $("#loading-text").html(originalText);
+                var DotsInterval = setInterval(function() {
+                    $("#loading-text").append(".");
+                    loadingDots++;
+                    loadingProgress++;
+                    if (loadingProgress == 3) {
+                        originalText = "Validating player data"
+                        $("#loading-text").html(originalText);
+                    }
+                    if (loadingProgress == 4) {
+                        originalText = "Retrieving characters"
+                        $("#loading-text").html(originalText);
+                    }
+                    if (loadingProgress == 6) {
+                        originalText = "Validating characters"
+                        $("#loading-text").html(originalText);
+                    }
+                    if(loadingDots == 4) {
+                        $("#loading-text").html(originalText);
+                        loadingDots = 0;
+                    }
+                }, 500);
+
+                setTimeout(function(){
+					setCharactersList()
+                    $.post('https://qb-multicharacter/setupCharacters');
+                    setTimeout(function(){
+                        clearInterval(DotsInterval);
+                        loadingProgress = 0;
+                        originalText = "Retrieving data";
+                        $(".welcomescreen").fadeOut(150);
+                        qbMultiCharacters.fadeInDown('.character-info', '20%', 400);
+                        qbMultiCharacters.fadeInDown('.characters-list', '20%', 400);
+                        $.post('https://qb-multicharacter/removeBlur');
+                    }, 2000);
+                }, 2000);
+            } else {
+                $('.container').fadeOut(250);
+                qbMultiCharacters.resetAll();
+            }
+        }
+
+        if (data.action == "setupCharacters") {
+            setupCharacters(event.data.characters)
+        }
+
+        if (data.action == "setupCharInfo") {
+            setupCharInfo(event.data.chardata)
+        }
+    });
 
     $('.datepicker').datepicker();
 });
@@ -233,7 +295,9 @@ $(document).on('click', '.character', function(e) {
             $("#delete").css({"display":"none"});
             $("#delete-text").html("Delete");
             $("#play").css({"display":"block"});
-            // $("#delete").css({"display":"block"});
+            if (EnableDeleteButton) {
+                $("#delete").css({"display":"block"});
+            }
             $.post('https://qb-multicharacter/cDataPed', JSON.stringify({
                 cData: cDataPed
             }));
@@ -257,7 +321,9 @@ $(document).on('click', '.character', function(e) {
             $("#delete").css({"display":"none"});
             $("#delete-text").html("Delete");
             $("#play").css({"display":"block"});
-            // $("#delete").css({"display":"block"});
+            if (EnableDeleteButton) {
+                $("#delete").css({"display":"block"});
+            }
             $.post('https://qb-multicharacter/cDataPed', JSON.stringify({
                 cData: cDataPed
             }));
@@ -283,7 +349,15 @@ function escapeHtml(string) {
 }
 function hasWhiteSpace(s) {
     return /\s/g.test(s);
-  }
+}
+
+$('#nationality').keyup(function() {
+    var nationalityValue = $(this).val();
+    if(nationalityValue.indexOf(' ') !== -1) {
+        $(this).val(nationalityValue.replace(' ', ''))
+    }
+});
+
 $(document).on('click', '#create', function (e) {
     e.preventDefault();
 
@@ -443,4 +517,5 @@ qbMultiCharacters.resetAll = function() {
     $('.welcomescreen').css("top", WelcomePercentage);
     $('.server-log').show();
     $('.server-log').css("top", "25%");
+    selectedChar = null;
 }
